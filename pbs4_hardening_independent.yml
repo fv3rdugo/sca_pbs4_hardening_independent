@@ -1,0 +1,20 @@
+# Policy for PBS4 Server Security
+
+policy:
+  id: "pbs4_hardening_independent"
+  title: "Security Configuration Assessment for PBS4 Server"
+  file: "pbs4_hardening_independent"
+  name: "PBS4 hardening server"
+  description: "Critical security tweaks for Linux servers running PBS4."
+  references:
+    - https://www.proxmox.com/en/products/proxmox-backup-server/overview
+    - https://wazuh.com
+
+requirements:
+  title: "Check PBS4 Server"
+  description: "Requirements for running the SCA scan against PBS4 server"
+  condition: all
+  rules: 
+   - 'c:dpkg -s proxmox-backup -> r:Status: install ok'
+
+# ID reservation range
