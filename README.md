@@ -3,7 +3,7 @@
 PBS4 Security Configuration Assessment
 
 [![Wazuh](https://img.shields.io/badge/Wazuh-4.x-blue)](https://wazuh.com)
-[![Proxmox Backup Server]](https://www.proxmox.com/en/products/proxmox-backup-server/overview)
+[![Proxmox Backup Server](https://img.shields.io/badge/pbs-4.x-orange)](https://www.proxmox.com/en/products/proxmox-backup-server/overview)
 [![License](https://img.shields.io/badge/License-AGPL--3.0-green)](LICENSE)
 
 Community integration of the **PBS 4 hardening server** for [Wazuh](https://wazuh.com).
@@ -83,4 +83,4 @@ By using these SCA, you agree to:
 
 ## Author
 
-Maintained by ****Fernando Verdugo****, Wazuh and Proxmox entusiast.
+Maintained by ****Fernando Verdugo****.
