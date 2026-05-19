@@ -56,10 +56,11 @@ Add the following inside the `<sca>` block in `/var/ossec/etc/ossec.conf`:
     <policy>ruleset/sca/pbs4_hardening_independent.yml</policy>
   </policies>
 </sca>
+```
 
 ---
 
-### 3. Restart Wazuh manager
+###  3. Restart Wazuh manager
 
 ```bash
 sudo systemctl restart wazuh-manager
