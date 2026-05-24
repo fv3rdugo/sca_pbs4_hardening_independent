@@ -21,6 +21,9 @@ jobs:
       - name: Install dependencies
         run: pip install pyyaml
 
+      - name: Install xmllint
+        run: sudo apt-get update && sudo apt-get install -y libxml2-utils
+
       - name: Validate SCA YAML syntax
         run: python tests/validate_sca.py sca/pbs4_hardening_independent
   validate-rules:
