@@ -25,14 +25,28 @@ requirements:
    - 'c:dpkg -s proxmox-backup -> r:Status: install ok'
 
 checks:
-  # 1.1.6 Enable Debian “non-free-firmware” repositories
-  # 1.1.7 Install CPU microcode
-  # 1.2.1.1 Enable UEFI Secure Boot
-  # 1.2.1.2 Kernel Lockdown (Integrity Mode)
-  # 1.2.3 Maintain a Valid Proxmox Subscription
-  # 2.1.3 Enable 2FA
-  # 3 Datastore Protections
-  ##### 3.1 Turn On “verify-new”
+  # Security Configuration Assessment for PBS4 Server
+  # Check PBS4 Server
+  # Enable Debian “non-free-firmware” repositories
+  # Enable UEFI Secure Boot
+  # Kernel Lockdown (Integrity Mode)
+  # Install CPU microcode
+  # Maintain a Valid Proxmox Subscription
+  # Enable 2FA
+  # Datastore Protections. Turn On “verify-new
+  # Restrictive permissions on PBS configuration files
+  # Ensure that the Proxmox Backup Proxy service is running
+  # Check for scheduled verification tasks
+  # Check for ZFS pool status
+  # ZFS: Check that the pools are ONLINE"
+  # Verify that PBS is listening on default port (8007)
+  # Kernel: Disable IP Forwarding
+  # Verify if API Tokens are defined (Best practice for PVE-to-PBS connection)
+  # Ensure no legacy/insecure remote shells are installed
+  # ZFS: Alert if the datastore is full (>90%)"
+  # ZFS: Check for checksum errors in pools
+  # Ensure Fail2Ban is active for API protection
+  # Ensure security updates repository is present
   
   - id: 210000
     title: "Enable Debian “non-free-firmware” repositories"
@@ -44,7 +58,8 @@ checks:
                     deb http://security.debian.org/debian-security bookworm-security main contrib non-free-firmware "
     condition: "all"
     rules:
-      - 'f:/etc/apt/sources.list r:non-free-firmware'
+      - 'f:/etc/apt/sources.list -> r:non-free-firmware'
+      - 'f:/etc/apt/sources.list.d/debian.sources -> r:non-free-firmware'
 
   - id: 210001
     title: "Install CPU microcode"
@@ -110,3 +125,114 @@ checks:
     condition: "any"
     rules:
       - 'f:/etc/proxmox-backup/datastore.cfg r:^\s*\t*verify-new'
+
+  # Check active service
+  - id: 210007
+    title: "Ensure that the Proxmox Backup Proxy service is running"
+    description: ""
+    condition: any
+    rules:
+      - 'c:systemctl is-active proxmox-backup-proxy -> r:^active'
+
+  # Sensitive configuration file permissions
+  - id: 210008
+    title: "Restrictive permissions on PBS configuration files"
+    description: ""
+    condition: all
+    rules:
+      - 'f:/etc/proxmox-backup/user.cfg -> p:640'
+      - 'f:/etc/proxmox-backup/datastore.cfg -> p:640'
+      - 'f:/etc/proxmox-backup/priv/shadow.cfg -> p:600'
+
+    # Network security
+  - id: 210009
+    title: "Verify that PBS is listening on default port (8007)"
+    description: ""
+    condition: any
+    rules:
+      - 'c:ss -tlnp -> r::8007'
+
+  # Verify backups
+  - id: 210010
+    title: "Check for scheduled verification tasks"
+    description: ""
+    condition: any
+    rules:
+      - 'f:/etc/proxmox-backup/verification.cfg -> r:schedule'
+
+  # Verify ZFS pool
+  - id: 210010
+    title: "Check for ZFS pool status"
+    description: ""
+    condition: any
+    rules:
+      - 'c:zpool status -> r:DEGRADED|FAULTED'
+
+  # ZFS status 
+  - id: 210011 
+    title: "ZFS: Check that the pools are ONLINE" 
+    description: ""
+    condition: all 
+    rules: 
+      - 'c:zpool status -> r:state: ONLINE' 
+      - 'c:zpool status -> !r:DEGRADED|FAULTED|OFFLINE' 
+
+  # Kernel Security 
+  - id: 210012 
+    title: "Kernel: Disable IP Forwarding" 
+    description: ""
+    condition: any 
+    rules: 
+    - 'c:sysctl net.ipv4.ip_forward -> r:0' 
+
+  # Space Monitoring in Datastores 
+  - id: 210013 
+    title: "ZFS: Alert if the datastore is full (>90%)" 
+    description: ""
+    condition: none 
+    rules: 
+      - 'c:zfs list -> r:([9][0-9]%)'
+
+  # API Token Usage
+  - id: 210014
+    title: "Verify if API Tokens are defined (Best practice for PVE-to-PBS connection)"
+    description: ""
+    condition: any
+    rules:
+      - 'f:/etc/proxmox-backup/user.cfg -> r:token'
+
+  # Network Service Hardening
+  - id: 210015
+    title: "Ensure no legacy/insecure remote shells are installed"
+    description: ""
+    condition: none
+    rules:
+      - 'c:dpkg -l -> r:telnet-server'
+      - 'c:dpkg -l -> r:rsh-server'
+      - 'c:dpkg -l -> r:nis'
+
+  # ZFS Dataset Health (Specific to PBS Datastores)
+  - id: 210016
+    title: "ZFS: Check for checksum errors in pools"
+    description: ""
+    condition: none
+    rules:
+      - 'c:zpool status -> r:READ|WRITE|CKSUM\s+[1-9]'
+
+  # Fail2Ban Presence
+  # Since PBS is often targeted by brute force on port 8007
+  - id: 210017
+    title: "Ensure Fail2Ban is active for API protection"
+    description: ""
+    condition: any
+    rules:
+      - 'c:systemctl is-active fail2ban -> r:active'
+
+  # APT Update Policy
+  - id: 210018
+    title: "Ensure security updates repository is present"
+    description: ""
+    condition: any
+    rules:
+      - 'f:/etc/apt/sources.list -> r:deb-security'
+      - 'f:/etc/apt/sources.list.d/debian.sources -> r:deb-security'
