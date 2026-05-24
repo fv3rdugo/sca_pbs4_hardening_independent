@@ -1,4 +1,10 @@
-# Policy for PBS4 Server Security
+# Security Configuration Assessment
+# PBS4 Checks for Server Security
+#
+# This program is free software; you can redistribute it
+# and/or modify it under the terms of the GNU General Public
+# License (version 3) as published by the FSF - Free Software
+# Foundation
 
 policy:
   id: "pbs4_hardening_independent"
@@ -8,6 +14,7 @@ policy:
   description: "Critical security tweaks for Linux servers running PBS4."
   references:
     - https://www.proxmox.com/en/products/proxmox-backup-server/overview
+    - https://github.com/HomeSecExplorer/Proxmox-Hardening-Guide.git
     - https://wazuh.com
 
 requirements:
@@ -17,43 +24,70 @@ requirements:
   rules: 
    - 'c:dpkg -s proxmox-backup -> r:Status: install ok'
 
-# ID reservation range
 checks:
-  - id: 21001
-      title: "Install CPU microcode"
-      description: "Ensures the latest vendor microcode mitigations and stability fixes are applied at boot."
-      rationale: "Addresses CPU errata and security vulnerabilities that cannot be fully fixed by system firmware alone."
-      remediation: "Install CPU microcode updates: Intel: apt install intel-microcode, AMD: apt install amd64-microcode. Reboot to apply (microcode is loaded at boot)."
-      condition: "any"
-      rules:
-        - 'c:dpkg -s intel-microcode -> r:Status: install ok'
-        - 'c:dpkg -s amd64-microcode -> r:Status: install ok'
-  - id: 21002
-      title: "Enable UEFI Secure Boot"
-      description: "Since Proxmox Backup Server 3.1, Secure Boot is supported out of the box via signed packages and integration in proxmox-boot-tool."
-      rationale: "Shim bootloader signed by Microsoft, fallback bootloader and MOKManager, signed by Proxmox, Grub EFI bootloader, signed by Proxmox and Kernel image, signed by Proxmox"
-      remediation: "Install with apt install shim-signed, , AMD: apt install amd64-microcode. Reboot to apply (microcode is loaded at boot)."
-      references:
-        -  "https://pbs.proxmox.com/docs/sysadmin.html#secure-boot"condition: "all"
-      rules:
-        - 'c:dpkg -s shim-signed -> r:Status: install ok'
-        - 'c:dpkg -s shim-helpers-amd64-signed -> r:Status: install ok'
-        - 'c:dpkg -s grub-efi-amd64-signed -> r:Status: install ok'
-        - 'c:dpkg -s proxmox-kernel-6.X.Y-Z-pve-signed -> r:Status: install ok'
-  - id: 21003
-      title: "Kernel Lockdown (Integrity Mode)"
-      description: "When Secure Boot is enabled, the parameter lockdown=integrity blocks unsigned kernel modules, restricts access to /dev/mem, and kernel-space tampering, even by a compromised root account."
-      rationale: ""
-      remediation: "Confirm Secure Boot: mokutil --sb-state -> should report 'SecureBoot enabled'. Add GRUB parameter: GRUB_CMDLINE_LINUX_DEFAULT=\"quiet lockdown=integrity\" update-grub reboot"
-      condition: "any"
-      rules:
-        - "f:/sys/kernel/security/lockdown -> r:[integrity] confidentiality none"
+  # 1.1.6 Enable Debian “non-free-firmware” repositories
+  # 1.1.7 Install CPU microcode
+  # 1.2.1.1 Enable UEFI Secure Boot
+  # 1.2.1.2 Kernel Lockdown (Integrity Mode)
 
-  - id: 21004
-      title: "Kernel Lockdown (Integrity Mode)"
-      description: """
-      rationale: ""
-      remediation: ""
-      condition: "any"
-      rules:
-        - 
+  # 1.2.3 Maintain a Valid Proxmox Subscription
+  # 1.2.4 Dedicated Filesystems for Datastores
+
+  - id: 210000
+    title: "Enable Debian “non-free-firmware” repositories"
+    description: "“Non-free” in Debian refers to software that does not comply with the Debian Free Software Guidelines (DFSG)."
+    rationale: "Enable Debian non-free-firmware alongside main and contrib to ensure required firmware and microcode are available."
+    remediation: "In /etc/apt/sources.list:
+                    deb http://deb.debian.org/debian bookworm main contrib non-free-firmware
+                    deb http://deb.debian.org/debian bookworm-updates main contrib non-free-firmware
+                    deb http://security.debian.org/debian-security bookworm-security main contrib non-free-firmware "
+    condition: "all"
+    rules:
+      - "f:/etc/apt/sources.list r:non-free-firmware"
+
+  - id: 210001
+    title: "Install CPU microcode"
+    description: "Ensures the latest vendor microcode mitigations and stability fixes are applied at boot."
+    rationale: "Addresses CPU errata and security vulnerabilities that cannot be fully fixed by system firmware alone."
+    remediation: "Install CPU microcode updates: Intel: apt install intel-microcode, AMD: apt install amd64-microcode. Reboot to apply (microcode is loaded at boot)."
+    condition: "any"
+    rules:
+      - 'c:dpkg -s intel-microcode -> r:Status: install ok'
+      - 'c:dpkg -s amd64-microcode -> r:Status: install ok'
+  
+  - id: 210002
+    title: "Enable UEFI Secure Boot"
+    description: "Since Proxmox Backup Server 3.1, Secure Boot is supported out of the box via signed packages and integration in proxmox-boot-tool."
+    rationale: "Shim bootloader signed by Microsoft, fallback bootloader and MOKManager, signed by Proxmox, Grub EFI bootloader, signed by Proxmox and Kernel image, signed by Proxmox"
+    remediation: "Install with apt install shim-signed, , AMD: apt install amd64-microcode. Reboot to apply (microcode is loaded at boot)."
+    references:
+      -  "https://pbs.proxmox.com/docs/sysadmin.html#secure-boot"
+    condition: "all"
+    rules:
+      - 'c:dpkg -s shim-signed -> r:Status: install ok'
+      - 'c:dpkg -s shim-helpers-amd64-signed -> r:Status: install ok'
+      - 'c:dpkg -s grub-efi-amd64-signed -> r:Status: install ok'
+      - 'c:dpkg -s proxmox-kernel-6.X.Y-Z-pve-signed -> r:Status: install ok'
+
+  - id: 210003
+    title: "Kernel Lockdown (Integrity Mode)"
+    description: "When Secure Boot is enabled, the parameter lockdown=integrity blocks unsigned kernel modules, restricts access to /dev/mem, and kernel-space tampering, even by a compromised root account."
+    rationale: ""
+    remediation: "Confirm Secure Boot: mokutil --sb-state -> should report 'SecureBoot enabled'. Add GRUB parameter: GRUB_CMDLINE_LINUX_DEFAULT=\"quiet lockdown=integrity\" update-grub reboot"
+    condition: "any"
+    rules:
+      - "f:/sys/kernel/security/lockdown -> r:[integrity] confidentiality none"
+
+  - id: 210004
+    title: "Maintain a Valid Proxmox Subscription"
+    description: "When Secure Boot is enabled, the parameter lockdown=integrity blocks unsigned kernel modules, restricts access to /dev/mem, and kernel-space tampering, even by a compromised root account."
+    rationale: ""
+    remediation: "Confirm Secure Boot: mokutil --sb-state -> should report 'SecureBoot enabled'. Add GRUB parameter: GRUB_CMDLINE_LINUX_DEFAULT=\"quiet lockdown=integrity\" update-grub reboot"
+    condition: "any"
+    rules:
+      - "f:/etc/proxmox-backup/subscription -> !r:^#"
+
+
+      
+
+      
