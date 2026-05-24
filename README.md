@@ -38,8 +38,11 @@ Community integration of the **PBS 4 hardening server** for [Wazuh](https://wazu
 
 ### 1. Copy SCA policies
 
+Never place custom policies in /var/ossec/ruleset/sca — they get overwritten on upgrade!
+On manager: /var/ossec/etc/shared/default/ (or group folder)
+
 ```bash
-sudo cp sca/pbs4_hardening_independent.yml /var/ossec/ruleset/sca/
+sudo cp sca/pbs4_hardening_independent.yml /var/ossec/etc/shared/default/
 ```
 
 ### 2. Enable SCA policies in ossec.conf
@@ -53,7 +56,7 @@ Add the following inside the `<sca>` block in `/var/ossec/etc/ossec.conf`:
   <interval>12h</interval>
   <skip_nfs>yes</skip_nfs>
   <policies>
-    <policy>ruleset/sca/pbs4_hardening_independent.yml</policy>
+    <policy>etc/shared/default/pbs4_hardening_independent.yml</policy>
   </policies>
 </sca>
 ```
