@@ -233,7 +233,7 @@ Now work on your code, test it so it is great. Then commit, push and create a *p
 
 
 
-## Estàndards de fet
+## Standards in fact
 ### Commits
 https://www.conventionalcommits.org/en/v1.0.0/
 ### Changelog
