@@ -4,9 +4,9 @@ First off, thank you for considering contributing. It's people like you that mak
 
 ## 1. Where do I go from here?
 
-[search the issue tracker](https://github.com/fv3rdugo/sca_pbs4_hardening_independent/-/issues)
+[search the issue tracker](https://github.com/fv3rdugo/sca_pbs4_hardening_independent/issues)
 to see if someone else in the community has already created a ticket.
-If it is not, go ahead and [create a new issue](https://github.com/fv3rdugo/sca_pbs4_hardening_independent/-/issues/new)!
+If it is not, go ahead and [create a new issue](https://github.com/fv3rdugo/sca_pbs4_hardening_independent/issues/new)!
 
 ## 2. Source code
 
@@ -30,7 +30,7 @@ If you contribute code, *thank you* ! Plase, follow this guide.
 
 Each commit message consists of a header, a body, and a footer. The header has a special format that includes a type, a scope, and a description.
 We use [conventional commits](https://conventionalcommits.org/) format. Each commit must be for
-a reason, and we should have an [issue](https://github.com/fv3rdugo/sca_pbs4_hardening_independent/-/issues) for that, so we decided to add the issue number in the footer.
+a reason, and we should have an [issue](https://github.com/fv3rdugo/sca_pbs4_hardening_independent/issues) for that, so we decided to add the issue number in the footer.
 
 The commit message should be structured as follows:
 
@@ -116,9 +116,9 @@ the issue will close.
 
 ## 7. Did you find a bug?
 
-* **Ensure the bug was not already reported** by searching on GitHub under [Issues](https://github.com/fv3rdugo/sca_pbs4_hardening_independent/-/issues).
+* **Ensure the bug was not already reported** by searching on GitHub under [Issues](https://github.com/fv3rdugo/sca_pbs4_hardening_independent/issues).
 
-* If you're unable to find an open issue addressing the problem, [open a new one](https://github.com/fv3rdugo/sca_pbs4_hardening_independent/-/issues/new).
+* If you're unable to find an open issue addressing the problem, [open a new one](https://github.com/fv3rdugo/sca_pbs4_hardening_independent/issues/new).
 Be sure to include a **title and clear description**, as much relevant information as possible,
 and a **code sample**, an **executable test case** or a step by step guide demonstrating the expected behavior that is not occurring.
 

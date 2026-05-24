@@ -39,6 +39,7 @@ Community integration of the **PBS 4 hardening server** for [Wazuh](https://wazu
 ### 1. Copy SCA policies
 
 Never place custom policies in /var/ossec/ruleset/sca — they get overwritten on upgrade!
+
 On manager: /var/ossec/etc/shared/default/ (or group folder)
 
 ```bash
