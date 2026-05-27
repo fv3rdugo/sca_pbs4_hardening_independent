@@ -144,6 +144,12 @@ checks:
       - 'f:/etc/proxmox-backup/user.cfg -> p:640'
       - 'f:/etc/proxmox-backup/datastore.cfg -> p:640'
       - 'f:/etc/proxmox-backup/shadow.json -> p:600'
+      - 'f:/etc/proxmox-backup/user.cfg -> u:root'
+      - 'f:/etc/proxmox-backup/user.cfg -> g:backup'
+      - 'f:/etc/proxmox-backup/datastore.cfg -> u:root'
+      - 'f:/etc/proxmox-backup/datastore.cfg -> g:backup'
+      - 'f:/etc/proxmox-backup/shadow.json -> u:root'
+      - 'f:/etc/proxmox-backup/shadow.json -> g:root'
 
     # Network security
   - id: 120109
