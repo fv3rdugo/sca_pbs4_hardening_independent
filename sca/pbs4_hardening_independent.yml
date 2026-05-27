@@ -124,7 +124,7 @@ checks:
                  `proxmox-backup-manager datastore update <<datastore>> --verify-new true`"
     condition: "any"
     rules:
-      - 'f:/etc/proxmox-backup/datastore.cfg r:^\s*\t*verify-new'
+      - 'f:/etc/proxmox-backup/datastore.cfg -> r:^\s*verify-new\s+true'
 
   # Check active service
   - id: 210007
