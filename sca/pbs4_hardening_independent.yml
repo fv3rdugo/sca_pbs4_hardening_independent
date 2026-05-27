@@ -25,6 +25,7 @@ requirements:
    - 'c:dpkg -s proxmox-backup -> r:Status: install ok'
 
 checks:
+  # IDs 120100-
   # Security Configuration Assessment for PBS4 Server
   # Check PBS4 Server
   # Enable Debian “non-free-firmware” repositories
@@ -48,7 +49,7 @@ checks:
   # Ensure Fail2Ban is active for API protection
   # Ensure security updates repository is present
   
-  - id: 210000
+  - id: 120100
     title: "Enable Debian “non-free-firmware” repositories"
     description: "“Non-free” in Debian refers to software that does not comply with the Debian Free Software Guidelines (DFSG)."
     rationale: "Enable Debian non-free-firmware alongside main and contrib to ensure required firmware and microcode are available."
@@ -61,7 +62,7 @@ checks:
       - 'f:/etc/apt/sources.list -> r:non-free-firmware'
       - 'f:/etc/apt/sources.list.d/debian.sources -> r:non-free-firmware'
 
-  - id: 210001
+  - id: 120101
     title: "Install CPU microcode"
     description: "Ensures the latest vendor microcode mitigations and stability fixes are applied at boot."
     rationale: "Addresses CPU errata and security vulnerabilities that cannot be fully fixed by system firmware alone."
@@ -71,7 +72,7 @@ checks:
       - 'c:dpkg -s intel-microcode -> r:Status: install ok'
       - 'c:dpkg -s amd64-microcode -> r:Status: install ok'
   
-  - id: 210002
+  - id: 120102
     title: "Enable UEFI Secure Boot"
     description: "Since Proxmox Backup Server 3.1, Secure Boot is supported out of the box via signed packages and integration in proxmox-boot-tool."
     rationale: "Shim bootloader signed by Microsoft, fallback bootloader and MOKManager, signed by Proxmox, Grub EFI bootloader, signed by Proxmox and Kernel image, signed by Proxmox"
@@ -85,7 +86,7 @@ checks:
       - 'c:dpkg -s grub-efi-amd64-signed -> r:Status: install ok'
       - 'c:dpkg -s proxmox-kernel-6.X.Y-Z-pve-signed -> r:Status: install ok'
 
-  - id: 210003
+  - id: 120103
     title: "Kernel Lockdown (Integrity Mode)"
     description: "When Secure Boot is enabled, the parameter lockdown=integrity blocks unsigned kernel modules, restricts access to /dev/mem, and kernel-space tampering, even by a compromised root account."
     rationale: "Defense-in-depth against kernel-level compromise. It prevents root-level users from modifying the running kernel or loading unauthorized code, which severely limits the blast radius of a potential hypervisor breakout"
@@ -94,7 +95,7 @@ checks:
     rules:
       - 'f:/sys/kernel/security/lockdown -> r:[integrity] confidentiality none'
 
-  - id: 210004
+  - id: 120104
     title: "Maintain a Valid Proxmox Subscription"
     description: "When Secure Boot is enabled, the parameter lockdown=integrity blocks unsigned kernel modules, restricts access to /dev/mem, and kernel-space tampering, even by a compromised root account."
     rationale: "Subscription provides: 
@@ -106,7 +107,7 @@ checks:
     rules:
       - 'f:/etc/proxmox-backup/subscription -> !r:^#'
 
-  - id: 210005
+  - id: 120105
     title: "Enable 2FA"
     description: "Two-factor authentication (2FA) adds an additional factor (TOTP or YubiKey OTP) to mitigate password compromise."
     rationale: "Neutralize the risks of compromised passwords by adding an extra layer of security."
@@ -115,7 +116,7 @@ checks:
     rules:
       - 'f:/etc/proxmox-backup/tfa.json !r:^#'
 
-  - id: 210006
+  - id: 120106
     title: "Datastore Protections. Turn On “verify-new"
     description: "**Forces an **immediate checksum comparison** after every chunk upload."
     rationale: "verify-new if enabled, all new backups will be verified right after completion.
@@ -127,7 +128,7 @@ checks:
       - 'f:/etc/proxmox-backup/datastore.cfg -> r:^\s*verify-new\s+true'
 
   # Check active service
-  - id: 210007
+  - id: 120107
     title: "Ensure that the Proxmox Backup Proxy service is running"
     description: ""
     condition: any
@@ -135,7 +136,7 @@ checks:
       - 'c:systemctl is-active proxmox-backup-proxy -> r:^active'
 
   # Sensitive configuration file permissions
-  - id: 210008
+  - id: 120108
     title: "Restrictive permissions on PBS configuration files"
     description: ""
     condition: all
@@ -145,7 +146,7 @@ checks:
       - 'f:/etc/proxmox-backup/priv/shadow.cfg -> p:600'
 
     # Network security
-  - id: 210009
+  - id: 120109
     title: "Verify that PBS is listening on default port (8007)"
     description: ""
     condition: any
@@ -153,7 +154,7 @@ checks:
       - 'c:ss -tlnp -> r::8007'
 
   # Verify backups
-  - id: 210010
+  - id: 120110
     title: "Check for scheduled verification tasks"
     description: ""
     condition: any
@@ -161,7 +162,7 @@ checks:
       - 'f:/etc/proxmox-backup/verification.cfg -> r:schedule'
 
   # Verify ZFS pool
-  - id: 210010
+  - id: 120111
     title: "Check for ZFS pool status"
     description: ""
     condition: any
@@ -169,7 +170,7 @@ checks:
       - 'c:zpool status -> r:DEGRADED|FAULTED'
 
   # ZFS status 
-  - id: 210011 
+  - id: 120112 
     title: "ZFS: Check that the pools are ONLINE" 
     description: ""
     condition: all 
@@ -178,7 +179,7 @@ checks:
       - 'c:zpool status -> !r:DEGRADED|FAULTED|OFFLINE' 
 
   # Kernel Security 
-  - id: 210012 
+  - id: 120113 
     title: "Kernel: Disable IP Forwarding" 
     description: ""
     condition: any 
@@ -186,7 +187,7 @@ checks:
     - 'c:sysctl net.ipv4.ip_forward -> r:0' 
 
   # Space Monitoring in Datastores 
-  - id: 210013 
+  - id: 120114 
     title: "ZFS: Alert if the datastore is full (>90%)" 
     description: ""
     condition: none 
@@ -194,7 +195,7 @@ checks:
       - 'c:zfs list -> r:([9][0-9]%)'
 
   # API Token Usage
-  - id: 210014
+  - id: 120115
     title: "Verify if API Tokens are defined (Best practice for PVE-to-PBS connection)"
     description: ""
     condition: any
@@ -202,7 +203,7 @@ checks:
       - 'f:/etc/proxmox-backup/user.cfg -> r:token'
 
   # Network Service Hardening
-  - id: 210015
+  - id: 120116
     title: "Ensure no legacy/insecure remote shells are installed"
     description: ""
     condition: none
@@ -212,7 +213,7 @@ checks:
       - 'c:dpkg -l -> r:nis'
 
   # ZFS Dataset Health (Specific to PBS Datastores)
-  - id: 210016
+  - id: 120117
     title: "ZFS: Check for checksum errors in pools"
     description: ""
     condition: none
@@ -229,7 +230,7 @@ checks:
       - 'c:systemctl is-active fail2ban -> r:active'
 
   # APT Update Policy
-  - id: 210018
+  - id: 120118
     title: "Ensure security updates repository is present"
     description: ""
     condition: any
