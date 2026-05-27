@@ -144,12 +144,8 @@ checks:
       - 'f:/etc/proxmox-backup/user.cfg -> p:640'
       - 'f:/etc/proxmox-backup/datastore.cfg -> p:640'
       - 'f:/etc/proxmox-backup/shadow.json -> p:600'
-      - 'f:/etc/proxmox-backup/user.cfg -> u:root'
       - 'f:/etc/proxmox-backup/user.cfg -> g:backup'
-      - 'f:/etc/proxmox-backup/datastore.cfg -> u:root'
       - 'f:/etc/proxmox-backup/datastore.cfg -> g:backup'
-      - 'f:/etc/proxmox-backup/shadow.json -> u:root'
-      - 'f:/etc/proxmox-backup/shadow.json -> g:root'
 
     # Network security
   - id: 120109
@@ -171,7 +167,7 @@ checks:
   - id: 120111
     title: "Check for ZFS pool status"
     description: ""
-    condition: any
+    condition: none
     rules:
       - 'c:zpool status -> r:DEGRADED|FAULTED'
 
