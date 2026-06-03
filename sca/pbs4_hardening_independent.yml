@@ -8,8 +8,7 @@
 
 policy:
   id: "pbs4_hardening_independent"
-  title: "Security Configuration Assessment for PBS4 Server"
-  file: "pbs4_hardening_independent"
+  file: "pbs4_hardening_independent.yml"
   name: "Proxmox Backup Server 4 hardening server"
   description: "This document provides prescriptive guidance for establishing a secure configuration posture for Proxmox Backup Server 4"
   references:
